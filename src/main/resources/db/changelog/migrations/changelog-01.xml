@@ -92,9 +92,21 @@
         </insert>
     </changeSet>
 
-<!--    <changeSet id="01.5" author="Roman">-->
-<!--        <insert tableName="users">-->
-<!--            <column name="name" value="ROLE_USER"/>-->
+    <changeSet id="01.6" author="Roman">
+        <insert tableName="users">
+            <column name="username" value="admin"/>
+            <column name="password" value="$2a$04$xz7PXmf6xvy18jAO26gnoOmtRPm1UcY8Jzh60E99jn2fGrcMqHCmi"/>
+            <column name="email" value="dev5roman@gmail.com"/>
+            <column name="first_name" value="Роман"/>
+            <column name="last_name" value="Шарипов"/>
+            <column name="about_me" value="В начале было слово"/>
+        </insert>
+    </changeSet>
+
+<!--    <changeSet id="01.7" author="Roman">-->
+<!--        <insert tableName="user_roles">-->
+<!--            <column name="user_id" value="1"/>-->
+<!--            <column name="role_id" value="2"/>-->
 <!--        </insert>-->
 <!--    </changeSet>-->
 
