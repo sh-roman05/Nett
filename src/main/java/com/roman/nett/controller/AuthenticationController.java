@@ -43,7 +43,7 @@ public class AuthenticationController {
 
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody AuthRequestDto requestDto) {
+    public ResponseEntity<?> login(@RequestBody AuthRequestDto requestDto) {
 
         try {
             log.info(requestDto.toString());
@@ -82,7 +82,7 @@ public class AuthenticationController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<Object> registerNewUser(@RequestBody RegisterRequestDto registerRequestDto) {
+    public ResponseEntity<?> registerNewUser(@RequestBody RegisterRequestDto registerRequestDto) {
 
         log.info(registerRequestDto.toString());
 

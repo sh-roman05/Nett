@@ -1,5 +1,6 @@
 package com.roman.nett.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.roman.nett.model.Status;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.List;
 @Setter
 @RequiredArgsConstructor
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "users")
 public class User {
 
@@ -38,7 +40,7 @@ public class User {
     private String lastName;
 
     @Column(name = "about_me")
-    private String about_me;
+    private String aboutMe;
 
     @CreatedDate
     @Column(name = "created", updatable = false)
