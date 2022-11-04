@@ -95,7 +95,7 @@
     <changeSet id="01.6" author="Roman">
         <insert tableName="users">
             <column name="username" value="admin"/>
-            <column name="password" value="$2a$04$xz7PXmf6xvy18jAO26gnoOmtRPm1UcY8Jzh60E99jn2fGrcMqHCmi"/>
+            <column name="password" value="$2a$04$xz7PXmf6xvy18jAO26gnoOmtRPm1UcY8Jzh60E99jn2fGrcMqHCmi"/> <!-- 54321 -->
             <column name="email" value="dev5roman@gmail.com"/>
             <column name="first_name" value="Роман"/>
             <column name="last_name" value="Шарипов"/>
@@ -103,11 +103,18 @@
         </insert>
     </changeSet>
 
-<!--    <changeSet id="01.7" author="Roman">-->
-<!--        <insert tableName="user_roles">-->
-<!--            <column name="user_id" value="1"/>-->
-<!--            <column name="role_id" value="2"/>-->
-<!--        </insert>-->
-<!--    </changeSet>-->
+    <changeSet id="01.7" author="Roman">
+        <insert tableName="user_roles">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="1"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="01.8" author="Roman">
+        <insert tableName="user_roles">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="2"/>
+        </insert>
+    </changeSet>
 
 </databaseChangeLog>
