@@ -64,11 +64,16 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> refreshUser(@AuthenticationPrincipal JwtUser jwtUser, @PathVariable long id) {
+    public ResponseEntity<?> editUser(@AuthenticationPrincipal JwtUser jwtUser, @PathVariable long id) {
         //Обновляемый пользователь должен совпадать с авторизованным
         if (jwtUser.getId().equals(id))
             return ResponseEntity.status(403).build();
 
+        //Изменяем пользователя
+
+
+
+        //userService.editUser(jwtUser.convertToUser());
 
 
 

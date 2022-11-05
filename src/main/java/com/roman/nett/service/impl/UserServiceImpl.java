@@ -78,4 +78,10 @@ public class UserServiceImpl implements UserService {
         log.info("IN delete - user with id: {} successfully deleted", id);
     }
 
+    @Override
+    public User editUser(User user) {
+        userRepository.save(user);
+        return null;
+    }
+
 }

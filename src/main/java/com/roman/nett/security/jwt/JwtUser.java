@@ -1,6 +1,7 @@
 package com.roman.nett.security.jwt;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.roman.nett.model.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -100,5 +101,17 @@ public class JwtUser implements UserDetails {
     public Date getLastPasswordResetDate() {
         return lastPasswordResetDate;
     }
+
+
+//    public User convertToUser() {
+//        return User.builder()
+//                .id(id)
+//                .username(username)
+//                .firstName(firstName)
+//                .lastName(lastName)
+//                .email(email)
+//                .build();
+//
+//    }
 }
 
