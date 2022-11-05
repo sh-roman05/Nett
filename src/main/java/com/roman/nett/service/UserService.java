@@ -1,5 +1,7 @@
 package com.roman.nett.service;
 
+
+import com.roman.nett.model.entity.Role;
 import com.roman.nett.model.entity.User;
 
 import java.util.List;

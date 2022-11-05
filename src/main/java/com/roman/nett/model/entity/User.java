@@ -2,9 +2,7 @@ package com.roman.nett.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.roman.nett.model.Status;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -12,11 +10,12 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+@Builder
 @Getter
 @Setter
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Entity
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "users")
 public class User {
 

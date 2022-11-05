@@ -67,15 +67,23 @@ public class UserController {
     public ResponseEntity<?> refreshUser(@AuthenticationPrincipal JwtUser jwtUser, @PathVariable long id) {
         //Обновляемый пользователь должен совпадать с авторизованным
         if (jwtUser.getId().equals(id))
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(403).build();
 
 
-        var res = ResponseEntity.status(HttpStatus.FORBIDDEN).body("lol");
 
-        log.info("Авторизован: {}", jwtUser.getUsername());
+
+
 
         return null;
     }
+
+
+
+
+
+
+
+
 
 
 
