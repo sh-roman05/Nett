@@ -1,10 +1,12 @@
 package com.roman.nett.service.impl;
 
+import com.roman.nett.dto.UserDto;
 import com.roman.nett.model.Status;
 import com.roman.nett.model.entity.Role;
 import com.roman.nett.model.entity.User;
 import com.roman.nett.repository.RoleRepository;
 import com.roman.nett.repository.UserRepository;
+import com.roman.nett.security.jwt.JwtUser;
 import com.roman.nett.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,9 +81,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User editUser(User user) {
-        userRepository.save(user);
-        return null;
+    public void editUser(JwtUser jwtUser, UserDto userDto) {
+
+        /*
+        Customer customerToUpdate = customerRepository.getOne(id);
+        customerToUpdate.setName(customerDto.getName);
+        customerRepository.save(customerToUpdate);
+        * */
+
+        //Это 2 запроса, не ок.
+        /*repository
+                .findById(user.getId()) // returns Optional<User>
+                .ifPresent(user1 -> {
+                    user1.setFirstname(user.getFirstname);
+                    user1.setLastname(user.getLastname);
+
+                    repository.save(user1);
+                });*/
     }
+
 
 }

@@ -1,5 +1,6 @@
 package com.roman.nett.controller;
 
+import com.roman.nett.dto.UserDto;
 import com.roman.nett.dto.UserResponseDto;
 import com.roman.nett.security.jwt.JwtUser;
 import com.roman.nett.service.UserService;
@@ -9,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -64,16 +67,15 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editUser(@AuthenticationPrincipal JwtUser jwtUser, @PathVariable long id) {
+    public ResponseEntity<?> editUser(@AuthenticationPrincipal JwtUser jwtUser,
+                                      @PathVariable long id,
+                                      @Valid @RequestBody UserDto userDto) {
         //Обновляемый пользователь должен совпадать с авторизованным
         if (jwtUser.getId().equals(id))
             return ResponseEntity.status(403).build();
 
         //Изменяем пользователя
-
-
-
-        //userService.editUser(jwtUser.convertToUser());
+        userService.editUser(jwtUser, userDto);
 
 
 
