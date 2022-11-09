@@ -14,4 +14,6 @@ public interface UserService {
     User findById(Long id);
     void delete(Long id);
     void editUser(JwtUser jwtUser, UserDto userDto);
+    boolean existUsername(String username);
+    boolean existsEmail(String email);
 }

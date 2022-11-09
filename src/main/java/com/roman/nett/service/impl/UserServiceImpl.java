@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) {
-        User result = userRepository.findByUsername(username);
+        User result = userRepository.findByUsernameIgnoreCase(username);
         log.info("IN findByUsername - user: {} found by username: {}", result, username);
         return result;
     }
@@ -82,6 +82,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void editUser(JwtUser jwtUser, UserDto userDto) {
+        log.warn("ОЧЕНЬ ВАЖНО id:{} email:{}", jwtUser.getId(), jwtUser.getEmail());
+
+        var user = userRepository.updateUser(userDto, jwtUser.getUsername());
+
+
 
         /*
         Customer customerToUpdate = customerRepository.getOne(id);
@@ -98,6 +103,16 @@ public class UserServiceImpl implements UserService {
 
                     repository.save(user1);
                 });*/
+    }
+
+    @Override
+    public boolean existUsername(String username) {
+        return userRepository.existsByUsernameIgnoreCase(username);
+    }
+
+    @Override
+    public boolean existsEmail(String email) {
+        return false;
     }
 
 

@@ -7,15 +7,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByUsername(String username);
+    User findByUsernameIgnoreCase(String username);
+    boolean existsByUsernameIgnoreCase(String username);
 
-    //А какие именно поля мне нужно обновить? Все которые прислал? А те что null?
+
+    //Обновление профиля юзера
     @Query(value = """
             update User u set
             u.email = :#{#userDto.email},
             u.firstName = :#{#userDto.firstName},
-            u.lastName = :#{#userDto.lastName}
-            where u.id = :#{#id}
+            u.lastName = :#{#userDto.lastName},
+            u.aboutMe = :#{#userDto.aboutMe}
+            where upper(u.username) = upper(:#{#username})
             """)
-    User updateUser(@Param("userDto") UserDto userDto, @Param("id") Long id);
+    User updateUser(@Param("userDto") UserDto userDto, @Param("username") String username);
 }
