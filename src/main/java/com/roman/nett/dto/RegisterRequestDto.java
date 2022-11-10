@@ -10,11 +10,11 @@ import javax.validation.constraints.Pattern;
 public record RegisterRequestDto (
         String username,
         String password,
-        @Email(message = "Incorrect 'email'")
+        @Email(message = "Incorrect email")
         String email,
-        @Length(min = 2, max = 20, message = "'firstName' must be between 2 and 20 characters")
+        @Length(min = 2, max = 20, message = "firstName must be between 2 and 20 characters")
         String firstName,
-        @Length(min = 2, max = 20, message = "'lastName' must be between 2 and 20 characters")
+        @Length(min = 2, max = 20, message = "lastName must be between 2 and 20 characters")
         String lastName
 ) { }
 

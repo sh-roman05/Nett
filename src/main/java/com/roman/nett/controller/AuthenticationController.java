@@ -41,8 +41,8 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody AuthRequestDto requestDto) {
         try {
-            var username = requestDto.getUsername();
-            var password = requestDto.getPassword();
+            var username = requestDto.username();
+            var password = requestDto.password();
             //Проверяет в базе логин и пароль
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             var user = userService.findByUsername(username);

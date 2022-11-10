@@ -74,43 +74,15 @@ public class UserController {
         //Обновляемый пользователь должен совпадать с авторизованным
         boolean isEquals = username.equalsIgnoreCase(jwtUser.getUsername());
 
-        log.info(userDto.toString());
-
-
-
-
         if(isEquals) {
-            //
             //Изменяем пользователя
             userService.editUser(jwtUser, userDto);
-
-
-
+            return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.status(403).build();
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-        return null;
     }
-
-
-
-
-
-
-
 
 
 
