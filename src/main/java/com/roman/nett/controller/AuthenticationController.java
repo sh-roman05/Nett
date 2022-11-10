@@ -3,28 +3,24 @@ package com.roman.nett.controller;
 import com.roman.nett.dto.AuthRequestDto;
 import com.roman.nett.dto.RegisterRequestDto;
 import com.roman.nett.dto.TokenResponseDto;
-import com.roman.nett.exception.UserAlreadyExistException;
-import com.roman.nett.model.entity.Role;
-import com.roman.nett.model.entity.User;
+import com.roman.nett.exception.RegisterUserErrorException;
 import com.roman.nett.security.jwt.JwtTokenProvider;
 import com.roman.nett.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 @Slf4j
 @RestController
@@ -56,6 +52,8 @@ public class AuthenticationController {
 
             String token = jwtTokenProvider.createToken(user);
 
+            log.info("IN login - for user: {} successfully generated new jwt token", user.getUsername());
+
             var response = TokenResponseDto.builder()
                     .username(user.getUsername())
                     .token(token).build();
@@ -69,41 +67,32 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerNewUser(@Valid @RequestBody RegisterRequestDto registerRequestDto) {
-        //Проверка на уникальность
-        var isExists = userService.existUsername(registerRequestDto.getUsername());
 
-        var isEmailExists = userService;
+        var existsUsername = userService.existsUsername(registerRequestDto.username());
+        var existsEmail = userService.existsEmail(registerRequestDto.email());
 
-        if(isExists) {
-
-            //Создание и регистрация пользователя
-            var user = User.builder()
-                    .username(registerRequestDto.getUsername())
-                    .email(registerRequestDto.getEmail())
-                    .firstName(registerRequestDto.getFirstName())
-                    .lastName(registerRequestDto.getLastName())
-                    .password(registerRequestDto.getPassword())
-                    .build();
+        if(!existsUsername && !existsEmail) {
 
             //Зарегистрировать
-            var registeredUser = userService.register(user);
+            var registeredUser = userService.register(registerRequestDto);
 
             String token = jwtTokenProvider.createToken(registeredUser);
-
-            log.info("User '{}' is registered", registeredUser.getUsername());
 
             var response = TokenResponseDto.builder()
                     .username(registeredUser.getUsername())
                     .token(token)
                     .build();
 
+            log.info("IN login - for user: {} successfully generated new jwt token", registeredUser.getUsername());
+
             return ResponseEntity.status(201).body(response);
 
         } else {
-            throw new UserAlreadyExistException("hjhj");
+            var errors = new LinkedHashMap<>();
+            if(existsUsername) errors.put("username", "username already exists");
+            if(existsEmail) errors.put("email", "email already exists");
+            throw new RegisterUserErrorException(errors);
         }
-
-
     }
 
 

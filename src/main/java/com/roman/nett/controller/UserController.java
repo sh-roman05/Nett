@@ -66,16 +66,37 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{username}")
     public ResponseEntity<?> editUser(@AuthenticationPrincipal JwtUser jwtUser,
-                                      @PathVariable long id,
+                                      @PathVariable String username,
                                       @Valid @RequestBody UserDto userDto) {
-        //Обновляемый пользователь должен совпадать с авторизованным
-        if (jwtUser.getId().equals(id))
-            return ResponseEntity.status(403).build();
 
-        //Изменяем пользователя
-        userService.editUser(jwtUser, userDto);
+        //Обновляемый пользователь должен совпадать с авторизованным
+        boolean isEquals = username.equalsIgnoreCase(jwtUser.getUsername());
+
+        log.info(userDto.toString());
+
+
+
+
+        if(isEquals) {
+            //
+            //Изменяем пользователя
+            userService.editUser(jwtUser, userDto);
+
+
+
+        } else {
+            return ResponseEntity.status(403).build();
+        }
+
+
+
+
+
+
+
+
 
 
 

@@ -38,6 +38,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<?> handleException(RegisterUserErrorException exception) {
+        //var error = new LinkedHashMap<>();
+        //error.put("error", exception.getMessage());
+        return ResponseEntity.badRequest().body(exception.getErrors());
+    }
+
     //
 
 

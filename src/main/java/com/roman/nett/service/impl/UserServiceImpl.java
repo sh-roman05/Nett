@@ -1,5 +1,6 @@
 package com.roman.nett.service.impl;
 
+import com.roman.nett.dto.RegisterRequestDto;
 import com.roman.nett.dto.UserDto;
 import com.roman.nett.model.Status;
 import com.roman.nett.model.entity.Role;
@@ -14,38 +15,42 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    @Lazy
-    private BCryptPasswordEncoder passwordEncoder;
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, @Lazy BCryptPasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
-    public User register(User user) {
-        //todo проверка нужно ли регестрировать
-        Role roleUser = roleRepository.findByName("ROLE_USER");
-        List<Role> userRoles = new ArrayList<>();
-        userRoles.add(roleUser);
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(userRoles);
-        user.setStatus(Status.ACTIVE);
-
+    public User register(RegisterRequestDto registerRequestDto) {
+        var roleUser = roleRepository.findByName("ROLE_USER");
+        var roles = List.of(roleUser);
+        var user = User.builder()
+                .username(registerRequestDto.username())
+                .email(registerRequestDto.email())
+                .firstName(registerRequestDto.firstName())
+                .lastName(registerRequestDto.lastName())
+                .password(passwordEncoder.encode(registerRequestDto.password()))
+                .roles(roles)
+                .status(Status.ACTIVE)
+                .build();
         User registeredUser = userRepository.save(user);
-
-        log.info("IN register - user: {} successfully registered", registeredUser);
-
+        log.info("IN register - user: {} successfully registered", registeredUser.getUsername());
         return registeredUser;
     }
+
+
 
     @Override
     public List<User> getAll() {
@@ -74,45 +79,23 @@ public class UserServiceImpl implements UserService {
         return result;
     }
 
-    @Override
-    public void delete(Long id) {
-        userRepository.deleteById(id);
-        log.info("IN delete - user with id: {} successfully deleted", id);
-    }
 
     @Override
     public void editUser(JwtUser jwtUser, UserDto userDto) {
-        log.warn("ОЧЕНЬ ВАЖНО id:{} email:{}", jwtUser.getId(), jwtUser.getEmail());
+        log.warn("ОЧЕНЬ ВАЖНО JwtUser: {}", jwtUser);
 
-        var user = userRepository.updateUser(userDto, jwtUser.getUsername());
+        userRepository.updateUser(userDto, jwtUser.getUsername());
 
-
-
-        /*
-        Customer customerToUpdate = customerRepository.getOne(id);
-        customerToUpdate.setName(customerDto.getName);
-        customerRepository.save(customerToUpdate);
-        * */
-
-        //Это 2 запроса, не ок.
-        /*repository
-                .findById(user.getId()) // returns Optional<User>
-                .ifPresent(user1 -> {
-                    user1.setFirstname(user.getFirstname);
-                    user1.setLastname(user.getLastname);
-
-                    repository.save(user1);
-                });*/
     }
 
     @Override
-    public boolean existUsername(String username) {
+    public boolean existsUsername(String username) {
         return userRepository.existsByUsernameIgnoreCase(username);
     }
 
     @Override
     public boolean existsEmail(String email) {
-        return false;
+        return userRepository.existsByEmailIgnoreCase(email);
     }
 
 
