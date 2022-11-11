@@ -22,10 +22,10 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private static final String ADMIN_ENDPOINT = "/api/v1/admin/**";
-    private static final String LOGIN_ENDPOINT = "/api/v1/auth/login/**";
+    private static final String LOGIN_ENDPOINT = "/api/v1/auth/**";
 
     @Autowired
     public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
@@ -42,8 +42,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .httpBasic().disable()
+        http.httpBasic().disable()
                 .csrf().disable()
                 //Сессию на каждого юзера не создаем
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
