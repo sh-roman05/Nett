@@ -13,6 +13,18 @@ import java.util.LinkedHashMap;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+        /*
+    *
+    * {
+    "timestamp": "2022-11-11T21:09:31.848+00:00",
+    "status": 404,
+    "error": "Not Found",
+    "path": "/api/v1/posts"
+}
+    * */
+
+    //todo Стандартную ошибку тоже прикреплять
+
     @ExceptionHandler
     public ResponseEntity<?> handleException(MethodArgumentNotValidException exception) {
         var errors = exception.getBindingResult().getFieldErrors().stream()
