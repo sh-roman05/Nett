@@ -27,8 +27,6 @@ public class UserController {
 
     @GetMapping("/")
     public ResponseEntity<?> getUsers() {
-
-
         var users = userService.getAll();
         var userDtoList = users.stream().map(item ->
                 UserResponseDto.builder()
@@ -40,7 +38,6 @@ public class UserController {
                         .created(item.getCreated().getTime())
                         .build()
         ).toList();
-
         return ResponseEntity.ok(userDtoList);
     }
 
@@ -49,8 +46,7 @@ public class UserController {
 
         var user = userService.findById(id);
 
-        if (user == null) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
+        if (user == null) return ResponseEntity.status(204).build();
 
 
         var userDto = UserResponseDto.builder()
