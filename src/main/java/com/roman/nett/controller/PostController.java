@@ -1,5 +1,6 @@
 package com.roman.nett.controller;
 
+import com.roman.nett.exception.NoEntityException;
 import com.roman.nett.service.PostService;
 import com.roman.nett.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,26 +25,12 @@ public class PostController {
 
     @GetMapping("/")
     public ResponseEntity<?> getPosts() {
-        //
         return ResponseEntity.ok(postService.getAll());
     }
 
-
-    /*
-    *
-    * {
-    "timestamp": "2022-11-11T21:09:31.848+00:00",
-    "status": 404,
-    "error": "Not Found",
-    "path": "/api/v1/posts"
-}
-    * */
-
     @GetMapping("/{postId}")
     public ResponseEntity<?> getPost(@PathVariable Long postId) {
-
-
-        return null;
+        return postService.getPostById(postId).map(ResponseEntity::ok).orElseThrow(() -> new NoEntityException(postId));
     }
 
     @PostMapping("/")

@@ -57,6 +57,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(exception.getErrors());
     }
 
+
+    @ExceptionHandler
+    public ResponseEntity<?> handleException(NoEntityException exception) {
+        return ResponseEntity.status(404).body("пост не найден " + exception.getMessage());
+    }
+
     //
 
 
