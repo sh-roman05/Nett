@@ -1,6 +1,7 @@
 package com.roman.nett.service.impl;
 
 import com.roman.nett.model.entity.Post;
+import com.roman.nett.model.entity.User;
 import com.roman.nett.repository.PostRepository;
 import com.roman.nett.service.PostService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,12 +28,22 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getAllByUserId() {
-        return null;
+    public List<Post> getAllByUser(User user) {
+        return postRepository.getAllByUser(user);
     }
 
     @Override
     public Optional<Post> getPostById(Long postId) {
         return postRepository.findById(postId);
+    }
+
+    @Override
+    public void addNewPost(Post post) {
+        postRepository.save(post);
+    }
+
+    @Override
+    public boolean deletePost(User user, Long postId) {
+        return postRepository.deleteByUserAndId(user, postId);
     }
 }

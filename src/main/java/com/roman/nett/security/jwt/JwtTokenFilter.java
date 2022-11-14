@@ -1,5 +1,6 @@
 package com.roman.nett.security.jwt;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,6 +14,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class JwtTokenFilter extends GenericFilterBean {
 
@@ -25,15 +27,24 @@ public class JwtTokenFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        String token = jwtTokenProvider.resolveToken((HttpServletRequest) servletRequest);
+        log.info("doFilter is called");
 
-        if(token != null && jwtTokenProvider.validateToken(token)) {
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
+        if(SecurityContextHolder.getContext().getAuthentication() == null)
+        {
+            String token = jwtTokenProvider.resolveToken((HttpServletRequest) servletRequest);
 
-            if(authentication != null) {
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+            if(token != null && jwtTokenProvider.validateToken(token)) {
+                Authentication authentication = jwtTokenProvider.getAuthentication(token);
+
+                if(authentication != null) {
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
         }
+
+
 
         filterChain.doFilter(servletRequest, servletResponse);
 

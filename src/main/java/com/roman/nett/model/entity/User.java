@@ -41,11 +41,11 @@ public class User {
     @Column(name = "about_me")
     private String aboutMe;
 
-    @CreatedDate
+    //@CreatedDate
     @Column(name = "created", updatable = false)
     private Date created;
 
-    @LastModifiedDate
+    //@LastModifiedDate
     @Column(name = "updated")
     private Date updated;
 

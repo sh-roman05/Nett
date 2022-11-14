@@ -46,6 +46,7 @@ public class JwtTokenProvider {
     public String createToken(User user) {
 
         var claims = Jwts.claims().setSubject(user.getUsername());
+        //Роли нужны для клиента
         claims.put("roles", getRoleNames(user.getRoles()));
 
         //Дата окончания срока годности токена
@@ -89,6 +90,8 @@ public class JwtTokenProvider {
             throw new JwtAuthenticationException("JWT token is expired or invalid");
         }
     }
+
+
 
     private List<String> getRoleNames(List<Role> userRoles) {
         return userRoles.stream().map(Role::getName).toList();

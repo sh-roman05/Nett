@@ -1,12 +1,20 @@
 package com.roman.nett.controller;
 
+import com.roman.nett.dto.NewPostRequestDto;
 import com.roman.nett.exception.NoEntityException;
+import com.roman.nett.model.entity.Post;
+import com.roman.nett.model.entity.User;
+import com.roman.nett.security.jwt.JwtUser;
 import com.roman.nett.service.PostService;
 import com.roman.nett.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.Date;
 
 @Slf4j
 @RestController
@@ -34,10 +42,60 @@ public class PostController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> newPost() {
+    public ResponseEntity<?> newPost(@AuthenticationPrincipal JwtUser jwtUser,
+                                     @Valid @RequestBody NewPostRequestDto newPostRequestDto) {
 
+        //var user = userService.findById(jwtUser.getId());
 
-        return null;
+        var user = User.builder().id(jwtUser.getId()).build();
+
+        var newPost = Post.builder()
+                .text(newPostRequestDto.text())
+                .user(user)
+                .created(new Date())
+                .build();
+
+        postService.addNewPost(newPost);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePost(@AuthenticationPrincipal JwtUser jwtUser,
+                                        @PathVariable Long id) {
+
+        var user = userService.findById(jwtUser.getId());
+        var result = postService.deletePost(user, id);
+
+        if(result)
+        {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(404).body("пост не найден");
+        }
+    }
+
+    @GetMapping("/?user={id}")
+    public ResponseEntity<?> getPostsByUser(@PathVariable Long id) {
+        var user = User.builder().id(id).build();
+        var posts = postService.getAllByUser(user);
+        return ResponseEntity.ok(posts);
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

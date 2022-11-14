@@ -25,7 +25,6 @@ public class Post {
     @Column(name = "post_text")
     private String text;
 
-    @CreatedDate
     @Column(name = "created", updatable = false)
     private Date created;
 }
