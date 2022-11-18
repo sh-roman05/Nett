@@ -1,15 +1,19 @@
 package com.roman.nett.service.impl;
 
+import com.roman.nett.dto.NewPostRequestDto;
+import com.roman.nett.dto.projection.PostPro;
 import com.roman.nett.model.entity.Post;
 import com.roman.nett.model.entity.User;
 import com.roman.nett.repository.PostRepository;
 import com.roman.nett.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,23 +34,40 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getAll(Pageable pageable) {
+    public List<PostPro> getAll(Pageable pageable) {
         return postRepository.findAllByOrderByCreatedDesc(pageable);
     }
 
+    //Получить всех пользователей по id
     @Override
-    public List<Post> getAllByUser(User user) {
-        return postRepository.findAllByUser(user);
+    public List<PostPro> getAllByUserId(Long userId, Pageable pageable) {
+        var user = User.builder().id(userId).build();
+        return postRepository.findAllByUserOrderByCreatedDesc(user, pageable);
     }
 
     @Override
-    public Optional<Post> getPostById(Long postId) {
-        return postRepository.findById(postId);
+    public Optional<PostPro> getPostById(Long postId) {
+        return postRepository.getPostById(postId);
     }
 
     @Override
-    public void addNewPost(Post post) {
-        postRepository.save(post);
+    public void addNewPost(NewPostRequestDto newPostRequestDto, User user) {
+
+        var newPost = Post.builder()
+                .text(newPostRequestDto.text())
+                .user(user)
+                .created(new Date())
+                .build();
+
+        try {
+            postRepository.save(newPost);
+        }catch (DataAccessException ex) {
+            //DataAccessException покрывает все
+            log.error("IN addNewPost {}", ex.fillInStackTrace().getMessage());
+        }
+
+
+
     }
 
     @Override

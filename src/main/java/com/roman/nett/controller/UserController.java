@@ -2,6 +2,8 @@ package com.roman.nett.controller;
 
 import com.roman.nett.dto.UserDto;
 import com.roman.nett.dto.UserResponseDto;
+import com.roman.nett.exception.NoEntityException;
+import com.roman.nett.exception.ResourceNotFoundException;
 import com.roman.nett.security.jwt.JwtUser;
 import com.roman.nett.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,39 +30,17 @@ public class UserController {
     @GetMapping("/")
     public ResponseEntity<?> getUsers() {
         var users = userService.getAll();
-        var userDtoList = users.stream().map(item ->
-                UserResponseDto.builder()
-                        .username(item.getUsername())
-                        .email(item.getEmail())
-                        .firstName(item.getFirstName())
-                        .lastName(item.getLastName())
-                        .aboutMe(item.getAboutMe())
-                        .created(item.getCreated().getTime())
-                        .build()
-        ).toList();
-        return ResponseEntity.ok(userDtoList);
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(@PathVariable long id) {
-
-        /*var user = userService.findById(id);
-        if (user == null) return ResponseEntity.status(204).build();
-        var userDto = UserResponseDto.builder()
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .aboutMe(user.getAboutMe())
-                .created(user.getCreated().getTime())
-                .build();*/
-
-        var user = userService.getById(id);
-
-
-
-        return ResponseEntity.ok(user);
+        return userService.getById(id).map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
     }
+
+
+
 
     @PutMapping("/{username}")
     public ResponseEntity<?> editUser(@AuthenticationPrincipal JwtUser jwtUser,

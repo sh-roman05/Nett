@@ -13,18 +13,7 @@ import java.util.LinkedHashMap;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-        /*
-    *
-    * {
-    "timestamp": "2022-11-11T21:09:31.848+00:00",
-    "status": 404,
-    "error": "Not Found",
-    "path": "/api/v1/posts"
-}
-    * */
-
-    //todo Стандартную ошибку тоже прикреплять
-
+    //Обработка ошибок при валидации через Hibernate Validator
     @ExceptionHandler
     public ResponseEntity<?> handleException(MethodArgumentNotValidException exception) {
         var errors = exception.getBindingResult().getFieldErrors().stream()
@@ -36,6 +25,17 @@ public class GlobalExceptionHandler {
         response.put("errors", errors);
         return ResponseEntity.badRequest().body(response);
     }
+
+    //Запрашиваемый ресурс не найден
+    @ExceptionHandler
+    public ResponseEntity<?> handleException(ResourceNotFoundException exception) {
+        var error = new LinkedHashMap<>();
+        error.put("error", exception.getMessage());
+        return ResponseEntity.status(404).body(error);
+    }
+
+
+
 
     @ExceptionHandler
     public ResponseEntity<?> handleException(BadCredentialsException exception) {

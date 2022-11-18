@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -33,6 +34,25 @@ public class UserServiceImpl implements UserService {
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
+    @Override
+    public List<UserPro> getAll() {
+        List<UserPro> result = userRepository.findAllUsers();
+        log.info("IN getAll - {} users found", result.size());
+        return result;
+    }
+
+    @Override
+    public Optional<UserPro> getById(long id) {
+        return userRepository.getById(id);
+    }
+
+
+
+
+
+
+
 
     @Override
     public User register(RegisterRequestDto registerRequestDto) {
@@ -54,12 +74,7 @@ public class UserServiceImpl implements UserService {
 
 
 
-    @Override
-    public List<User> getAll() {
-        List<User> result = userRepository.findAll();
-        log.info("IN getAll - {} users found", result.size());
-        return result;
-    }
+
 
     @Override
     public User findByUsername(String username) {
@@ -90,10 +105,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    @Override
-    public UserPro getById(long id) {
-        return userRepository.getById(id);
-    }
+
 
     @Override
     public boolean existsUsername(String username) {
