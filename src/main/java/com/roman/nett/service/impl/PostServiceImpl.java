@@ -6,6 +6,8 @@ import com.roman.nett.repository.PostRepository;
 import com.roman.nett.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,8 +30,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<Post> getAll(Pageable pageable) {
+        return postRepository.findAllByOrderByCreatedDesc(pageable);
+    }
+
+    @Override
     public List<Post> getAllByUser(User user) {
-        return postRepository.getAllByUser(user);
+        return postRepository.findAllByUser(user);
     }
 
     @Override
@@ -44,6 +51,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public boolean deletePost(User user, Long postId) {
-        return postRepository.deleteByUserAndId(user, postId);
+        var result = postRepository.deleteByIdAndUser(postId, user);
+        return result > 0;
     }
 }

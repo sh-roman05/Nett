@@ -44,11 +44,8 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(@PathVariable long id) {
 
-        var user = userService.findById(id);
-
+        /*var user = userService.findById(id);
         if (user == null) return ResponseEntity.status(204).build();
-
-
         var userDto = UserResponseDto.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
@@ -56,10 +53,13 @@ public class UserController {
                 .lastName(user.getLastName())
                 .aboutMe(user.getAboutMe())
                 .created(user.getCreated().getTime())
-                .build();
+                .build();*/
+
+        var user = userService.getById(id);
 
 
-        return ResponseEntity.ok(userDto);
+
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{username}")

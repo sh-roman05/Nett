@@ -2,6 +2,8 @@ package com.roman.nett.service.impl;
 
 import com.roman.nett.dto.RegisterRequestDto;
 import com.roman.nett.dto.UserDto;
+import com.roman.nett.dto.UserResponseDto;
+import com.roman.nett.dto.projection.UserPro;
 import com.roman.nett.model.Status;
 import com.roman.nett.model.entity.Role;
 import com.roman.nett.model.entity.User;
@@ -86,6 +88,11 @@ public class UserServiceImpl implements UserService {
 
         userRepository.updateUser(userDto, jwtUser.getUsername());
 
+    }
+
+    @Override
+    public UserPro getById(long id) {
+        return userRepository.getById(id);
     }
 
     @Override
