@@ -1,11 +1,13 @@
 package com.roman.nett.exception;
 
 import com.roman.nett.dto.ValidErrorDto;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.LinkedHashMap;
@@ -15,7 +17,8 @@ public class GlobalExceptionHandler {
 
     //Обработка ошибок при валидации через Hibernate Validator
     @ExceptionHandler
-    public ResponseEntity<?> handleException(MethodArgumentNotValidException exception) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Object handleException(MethodArgumentNotValidException exception) {
         var errors = exception.getBindingResult().getFieldErrors().stream()
                 .map(fieldError -> ValidErrorDto.builder()
                         .field(fieldError.getField())
@@ -23,16 +26,28 @@ public class GlobalExceptionHandler {
                         .build()).toList();
         var response = new LinkedHashMap<>();
         response.put("errors", errors);
-        return ResponseEntity.badRequest().body(response);
+        return response;
     }
 
     //Запрашиваемый ресурс не найден
     @ExceptionHandler
-    public ResponseEntity<?> handleException(ResourceNotFoundException exception) {
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Object handleException(ResourceNotFoundException exception) {
         var error = new LinkedHashMap<>();
         error.put("error", exception.getMessage());
-        return ResponseEntity.status(404).body(error);
+        return error;
     }
+
+    //Нет разрешений на получение ресурса
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Object handleException(NoPermissionException exception) {
+        var error = new LinkedHashMap<>();
+        error.put("error", exception.getMessage());
+        return error;
+    }
+
+
 
 
 

@@ -1,6 +1,7 @@
 package com.roman.nett.controller;
 
 import com.roman.nett.dto.NewPostRequestDto;
+import com.roman.nett.exception.NoPermissionException;
 import com.roman.nett.exception.ResourceNotFoundException;
 import com.roman.nett.model.entity.User;
 import com.roman.nett.security.jwt.JwtUser;
@@ -41,16 +42,16 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
-    @GetMapping("/{postId}/")
-    public ResponseEntity<?> getPost(@PathVariable Long postId) {
-        log.info("IN getPost - trying to get post with id {}", postId);
-        return postService.getPostById(postId)
+    @GetMapping("/{id}/")
+    public ResponseEntity<?> getPost(@PathVariable Long id) {
+        log.info("IN getPost - trying to get post with id {}", id);
+        return postService.getPostById(id)
                 .map(postPro -> {
-                    log.info("IN getPost - post with id {} found", postId);
+                    log.info("IN getPost - post with id {} found", id);
                     return ResponseEntity.ok(postPro);
                 }).orElseThrow(() -> {
-                    log.warn("IN getPost - attempt to get post with id {} failed with exception", postId);
-                    return new ResourceNotFoundException("Post with id " + postId + " not found");
+                    log.warn("IN getPost - attempt to get post with id {} failed with exception", id);
+                    return new ResourceNotFoundException("Post with id " + id + " not found");
                 });
     }
 
@@ -58,68 +59,36 @@ public class PostController {
     @PostMapping("/")
     public ResponseEntity<?> newPost(@AuthenticationPrincipal JwtUser jwtUser,
                                      @Valid @RequestBody NewPostRequestDto newPostRequestDto) {
+
         //var user = userService.findById(jwtUser.getId());
         var user = User.builder().id(jwtUser.getId()).build();
-        postService.addNewPost(newPostRequestDto, user);
+
+        var post = postService.addNewPost(newPostRequestDto, user);
+
+
+
+
         return ResponseEntity.ok().build();
     }
 
-    /////
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePost(@AuthenticationPrincipal JwtUser jwtUser,
-                                        @PathVariable Long id) {
-
-        //Ошибка если мне нельзя удалять
-        //Ошибка если не найден пост
-        //Делать разные?
-
-        //post id 15 можно удалить для теста
-
-        var post = postService.getPostById(id);
-
-        post.ifPresentOrElse(item -> {
-            log.info(item.getText());
-        }, () -> {
-            throw new ResourceNotFoundException("Ошибка пост не найден");
-        });
-
-
-
-        /*post.map(item -> {
-
-
-            return item;
-
-
-        }).orElseThrow(() -> new ResourceNotFoundException("Ошибка пост не найден"));*/
-
-
-        /*if(post.isPresent())
-        {
-            if(post.get().getUserId() == jwtUser.getId())
-        }
-        else
-        {
-            //Ошибка пост не найден
-            throw new ResourceNotFoundException("Ошибка пост не найден");
-        }*/
-
-
-
-
-
-
-
-        var user = userService.findById(jwtUser.getId());
-
-        var result = postService.deletePost(user, id);
-
-        if(result)
-        {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(404).body("пост не найден или вы не его автор");
-        }
+    public ResponseEntity<?> deletePost(@AuthenticationPrincipal JwtUser jwtUser, @PathVariable Long id) {
+        return postService.getPostById(id)
+                .map(item -> {
+                    //Проверяем, принадлежит ли пост пользователю
+                    if (jwtUser.getId().equals(item.getUserId())) {
+                        postService.deletePost(item.getId());
+                        log.info("IN deletePost - Post with id {} successfully deleted", id);
+                        return ResponseEntity.ok().build();
+                    } else {
+                        log.warn("IN deletePost - Attempt to delete post with id {} rejected and thrown NoPermissionException", id);
+                        throw new NoPermissionException("The post with id {} does not belong to you. You cannot remove it");
+                    }
+                }).orElseThrow(() -> {
+                    log.warn("IN deletePost - Post with id {} not found and thrown ResourceNotFoundException", id);
+                    throw new ResourceNotFoundException("Post with id " + id + " not found");
+                });
     }
 
 
