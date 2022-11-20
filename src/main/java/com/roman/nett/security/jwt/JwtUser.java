@@ -42,16 +42,14 @@ public class JwtUser implements UserDetails {
         return true;
     }
 
+    public User convertToUser() {
+        return User.builder()
+                .id(id)
+                .username(username)
+                .firstName(firstName)
+                .lastName(lastName)
+                .email(email)
+                .build();
 
-
-//    public User convertToUser() {
-//        return User.builder()
-//                .id(id)
-//                .username(username)
-//                .firstName(firstName)
-//                .lastName(lastName)
-//                .email(email)
-//                .build();
-//
-//    }
+    }
 }

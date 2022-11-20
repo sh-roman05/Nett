@@ -2,9 +2,11 @@ package com.roman.nett.service.impl;
 
 import com.roman.nett.dto.NewPostRequestDto;
 import com.roman.nett.dto.projection.PostPro;
+import com.roman.nett.exception.UnknownRepositoryException;
 import com.roman.nett.model.entity.Post;
 import com.roman.nett.model.entity.User;
 import com.roman.nett.repository.PostRepository;
+import com.roman.nett.security.jwt.JwtUser;
 import com.roman.nett.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,27 +57,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostPro addNewPost(NewPostRequestDto newPostRequestDto, User user) {
-
+    public PostPro addNewPost(NewPostRequestDto newPostRequestDto, JwtUser jwtUser) {
         var newPost = Post.builder()
                 .text(newPostRequestDto.text())
-                .user(user)
+                .user(jwtUser.convertToUser())
                 .created(new Date())
                 .build();
-
         try {
-            var save = postRepository.save(newPost);
-            return postRepository.getPostById(save.getId()).get();
-
-        }catch (DataAccessException ex) {
-            //DataAccessException покрывает все
-            log.error("IN addNewPost {}", ex.fillInStackTrace().getMessage());
-
-            throw new RuntimeException();
+            return postRepository.savePost(newPost);
+        } catch (DataAccessException ex) {
+            log.error("IN addNewPost - thrown DataAccessException with message: {}", ex.getMessage());
+            throw new UnknownRepositoryException("При сохранении поста в базу произошла ошибка");
         }
-
-
-
     }
 
     @Override

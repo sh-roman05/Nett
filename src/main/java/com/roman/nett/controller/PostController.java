@@ -21,24 +21,30 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1/posts")
 public class PostController {
 
-    private final UserService userService;
     private final PostService postService;
 
     @Autowired
-    public PostController(UserService userService, PostService postService) {
-        this.userService = userService;
+    public PostController(PostService postService) {
         this.postService = postService;
     }
 
     @GetMapping("/")
     public ResponseEntity<?> getPosts(Pageable pageable) {
+        log.info("IN getPostsByUser - trying to get {} posts on page {}",
+                pageable.getPageSize(), pageable.getPageNumber());
         var posts = postService.getAll(pageable);
+        if (posts.size() == 0)
+            return ResponseEntity.notFound().build();
         return ResponseEntity.ok(posts);
     }
 
     @GetMapping(path = "/", params = { "user" })
     public ResponseEntity<?> getPostsByUser(@RequestParam("user") Long id, Pageable pageable) {
+        log.info("IN getPostsByUser - trying to get {} posts on page {} owned by user with id {}",
+                pageable.getPageSize(), pageable.getPageNumber(), id);
         var posts = postService.getAllByUserId(id, pageable);
+        if (posts.size() == 0)
+            return ResponseEntity.notFound().build();
         return ResponseEntity.ok(posts);
     }
 
@@ -55,22 +61,14 @@ public class PostController {
                 });
     }
 
-    /////
     @PostMapping("/")
     public ResponseEntity<?> newPost(@AuthenticationPrincipal JwtUser jwtUser,
                                      @Valid @RequestBody NewPostRequestDto newPostRequestDto) {
-
-        //var user = userService.findById(jwtUser.getId());
-        var user = User.builder().id(jwtUser.getId()).build();
-
-        var post = postService.addNewPost(newPostRequestDto, user);
-
-
-
-
-        return ResponseEntity.ok().build();
+        log.info("IN newPost - trying to create a post");
+        var post = postService.addNewPost(newPostRequestDto, jwtUser);
+        log.info("IN newPost - post was successfully created with id {}", post.getId());
+        return ResponseEntity.ok().body(post);
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(@AuthenticationPrincipal JwtUser jwtUser, @PathVariable Long id) {

@@ -31,15 +31,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     //Получить все посты отсортированные по новизне
     List<PostPro> findAllByOrderByCreatedDesc(Pageable pageable);
 
-
-//    @Query(value = """
-//        insert into posts (post_text, user_id)
-//        values (:#{#post.text}, :#{#post.user.id})
-//        returning id, post_text, user_id, created
-//        """, nativeQuery = true)
-//    PostPro savePost(Post post);
-
-
+    //Сохранить пост и вернуть сохраненный с новым id
+    @Query(value = """
+        insert into posts (post_text, user_id)
+        values (:#{#post.text}, :#{#post.user.id})
+        returning id, post_text, user_id, created
+        """, nativeQuery = true)
+    PostPro savePost(Post post);
 
 
 }
