@@ -1,10 +1,8 @@
 package com.roman.nett.repository;
 
 import com.roman.nett.dto.UserDto;
-import com.roman.nett.dto.UserResponseDto;
-import com.roman.nett.dto.projection.UserPro;
+import com.roman.nett.dto.projection.UserView;
 import com.roman.nett.model.entity.User;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,10 +17,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
     @Query("select u from User u where u.id = :id")
-    Optional<UserPro> getById(long id);
+    Optional<UserView> getById(long id);
 
     @Query("select u from User u")
-    List<UserPro> findAllUsers();
+    List<UserView> findAllUsers();
 
 
 

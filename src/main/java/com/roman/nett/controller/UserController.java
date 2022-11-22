@@ -27,11 +27,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
-    public ResponseEntity<?> getUsers() {
-        var users = userService.getAll();
-        return ResponseEntity.ok(users);
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(@PathVariable long id) {
@@ -39,10 +34,27 @@ public class UserController {
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> editUser(@AuthenticationPrincipal JwtUser jwtUser,
+                                      @PathVariable Long id,
+                                      @Valid @RequestBody UserDto userDto) {
+
+        //Обновляемый пользователь должен совпадать с авторизованным
+        boolean isEquals = id.equals(jwtUser.getId());
+
+        if(isEquals) {
+            //Изменяем пользователя
+            //userService.editUser(jwtUser, userDto);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(403).body("Вы можете обновить только свой профиль");
+        }
+
+    }
 
 
 
-    @PutMapping("/{username}")
+    /*@PutMapping("/{username}")
     public ResponseEntity<?> editUser(@AuthenticationPrincipal JwtUser jwtUser,
                                       @PathVariable String username,
                                       @Valid @RequestBody UserDto userDto) {
@@ -58,7 +70,7 @@ public class UserController {
             return ResponseEntity.status(403).build();
         }
 
-    }
+    }*/
 
 
 

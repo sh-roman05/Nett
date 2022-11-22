@@ -1,7 +1,8 @@
 package com.roman.nett.service.impl;
 
 import com.roman.nett.dto.NewPostRequestDto;
-import com.roman.nett.dto.projection.PostPro;
+import com.roman.nett.dto.PostResponseDto;
+import com.roman.nett.dto.projection.PostView;
 import com.roman.nett.exception.UnknownRepositoryException;
 import com.roman.nett.model.entity.Post;
 import com.roman.nett.model.entity.User;
@@ -40,31 +41,37 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostPro> getAll(Pageable pageable) {
+    public List<PostView> getAll(Pageable pageable) {
         return postRepository.findAllByOrderByCreatedDesc(pageable);
     }
 
     //Получить всех пользователей по id
     @Override
-    public List<PostPro> getAllByUserId(Long userId, Pageable pageable) {
+    public List<PostView> getAllByUserId(Long userId, Pageable pageable) {
         var user = User.builder().id(userId).build();
         return postRepository.findAllByUserOrderByCreatedDesc(user, pageable);
     }
 
     @Override
-    public Optional<PostPro> getPostById(Long postId) {
+    public Optional<PostView> getPostById(Long postId) {
         return postRepository.getPostById(postId);
     }
 
     @Override
-    public PostPro addNewPost(NewPostRequestDto newPostRequestDto, JwtUser jwtUser) {
-        var newPost = Post.builder()
-                .text(newPostRequestDto.text())
-                .user(jwtUser.convertToUser())
-                .created(new Date())
-                .build();
+    public PostResponseDto addNewPost(NewPostRequestDto newPostRequestDto, JwtUser jwtUser) {
         try {
-            return postRepository.savePost(newPost);
+            var newPost = Post.builder()
+                    .text(newPostRequestDto.text())
+                    .user(jwtUser.convertToUser())
+                    .created(new Date())
+                    .build();
+            var result = postRepository.save(newPost);
+            return PostResponseDto.builder()
+                    .id(result.getId())
+                    .userId(result.getUser().getId())
+                    .text(result.getText())
+                    .created(result.getCreated().getTime())
+                    .build();
         } catch (DataAccessException ex) {
             log.error("IN addNewPost - thrown DataAccessException with message: {}", ex.getMessage());
             throw new UnknownRepositoryException("При сохранении поста в базу произошла ошибка");

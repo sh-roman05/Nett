@@ -3,8 +3,7 @@ package com.roman.nett.service;
 
 import com.roman.nett.dto.RegisterRequestDto;
 import com.roman.nett.dto.UserDto;
-import com.roman.nett.dto.UserResponseDto;
-import com.roman.nett.dto.projection.UserPro;
+import com.roman.nett.dto.projection.UserView;
 import com.roman.nett.model.entity.User;
 import com.roman.nett.security.jwt.JwtUser;
 
@@ -22,6 +21,6 @@ public interface UserService {
     void editUser(JwtUser jwtUser, UserDto userDto);
 
     //Перевод на проекции
-    Optional<UserPro> getById(long id);
-    List<UserPro> getAll();
+    Optional<UserView> getById(long id);
+    List<UserView> getAll();
 }

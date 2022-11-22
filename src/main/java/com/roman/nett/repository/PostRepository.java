@@ -1,6 +1,6 @@
 package com.roman.nett.repository;
 
-import com.roman.nett.dto.projection.PostPro;
+import com.roman.nett.dto.projection.PostView;
 import com.roman.nett.model.entity.Post;
 import com.roman.nett.model.entity.User;
 import org.springframework.data.domain.Pageable;
@@ -23,21 +23,21 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     //Получить пост по его id
     @Query("select p from Post p where p.id = :id")
-    Optional<PostPro> getPostById(long id);
+    Optional<PostView> getPostById(long id);
 
     //Получить посты у пользователя отсортированные по новизне
-    List<PostPro> findAllByUserOrderByCreatedDesc(User user, Pageable pageable);
+    List<PostView> findAllByUserOrderByCreatedDesc(User user, Pageable pageable);
 
     //Получить все посты отсортированные по новизне
-    List<PostPro> findAllByOrderByCreatedDesc(Pageable pageable);
+    List<PostView> findAllByOrderByCreatedDesc(Pageable pageable);
 
     //Сохранить пост и вернуть сохраненный с новым id
-    @Query(value = """
+    /*@Query(value = """
         insert into posts (post_text, user_id)
         values (:#{#post.text}, :#{#post.user.id})
         returning id, post_text, user_id, created
         """, nativeQuery = true)
-    PostPro savePost(Post post);
+    PostView savePost(Post post);*/
 
 
 }

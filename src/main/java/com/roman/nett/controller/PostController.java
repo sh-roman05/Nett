@@ -66,7 +66,7 @@ public class PostController {
                                      @Valid @RequestBody NewPostRequestDto newPostRequestDto) {
         log.info("IN newPost - trying to create a post");
         var post = postService.addNewPost(newPostRequestDto, jwtUser);
-        log.info("IN newPost - post was successfully created with id {}", post.getId());
+        log.info("IN newPost - post was successfully created with id {}", post.id());
         return ResponseEntity.ok().body(post);
     }
 

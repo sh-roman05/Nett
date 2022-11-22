@@ -2,10 +2,8 @@ package com.roman.nett.service.impl;
 
 import com.roman.nett.dto.RegisterRequestDto;
 import com.roman.nett.dto.UserDto;
-import com.roman.nett.dto.UserResponseDto;
-import com.roman.nett.dto.projection.UserPro;
+import com.roman.nett.dto.projection.UserView;
 import com.roman.nett.model.Status;
-import com.roman.nett.model.entity.Role;
 import com.roman.nett.model.entity.User;
 import com.roman.nett.repository.RoleRepository;
 import com.roman.nett.repository.UserRepository;
@@ -36,14 +34,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserPro> getAll() {
-        List<UserPro> result = userRepository.findAllUsers();
+    public List<UserView> getAll() {
+        List<UserView> result = userRepository.findAllUsers();
         log.info("IN getAll - {} users found", result.size());
         return result;
     }
 
     @Override
-    public Optional<UserPro> getById(long id) {
+    public Optional<UserView> getById(long id) {
         return userRepository.getById(id);
     }
 
